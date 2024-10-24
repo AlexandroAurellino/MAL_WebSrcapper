@@ -45,7 +45,8 @@ for tag in soup.select('td.title a.hoverinfo_trigger.fl-l.ml12.mr8'):
 # Debug print: Print all extracted manga links
 print(f"Extracted {len(manga_links)} manga links:")
 
-number_links = 1
+number_links = 1 #initialize number for links debug
+number_processed = 0 #initialize number for processed manga debug
 for link in manga_links:
     print(number_links, " ", link)
     number_links += 1
@@ -184,17 +185,24 @@ for url in manga_links:
 
         # Append the new manga data to the existing list
         # Check if the title already exists in the data
-        number_processed = 0
-        if not any(manga['Title'] == title for manga in data):
+        exists = False
+        for manga in data:
+            if manga['Title'] == title:
+                exists = True
+                break
+
+        if not exists:
             data.append(manga_data)
             number_processed += 1
-            print(number_processed, ". ", title, "Successfully added")  # Debug print for successful addition        
             print("=========================")
+            print(number_processed, ". ", title, "Successfully added")  # Debug print for successful addition        
+            
 
             # Save the updated list to the file incrementally
             with open(file_path, mode='w', encoding='utf-8') as file:
                 json.dump(data, file, ensure_ascii=False, indent=4)
                 print(f"Data saved to {file_path}")  # Debug print after saving
+                print("=========================")
         else:
             print(title, "Already exists in the dataset")
             print("=========================")
